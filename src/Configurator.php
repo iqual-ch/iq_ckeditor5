@@ -68,16 +68,12 @@ class Configurator {
         continue;
       }
 
-      $toolbar = $editor_settings['toolbar'] ?? [];
-
-      // Reorder toolbar items according to specific order
-      $cke5_toolbar = $this->reorderToolbarItems($toolbar);
-            
-      // Activate and configure additional plugins
-      $cke5_plugin_settings = $this->activateAdditionalPlugins($cke5_plugin_settings);
+      $editor_settings = $editor->getSettings();
+      $toolbar = $editor_settings['toolbar']['items'] ?? [];
+      $plugin_settings = $editor_settings['plugins'] ?? [];
 
       // Configure advanced features with Plugin Pack
-      $advanced_config = $this->configureAdvancedFeatures($cke5_toolbar, $cke5_plugin_settings);
+      $advanced_config = $this->configureAdvancedFeatures($toolbar, $plugin_settings);
  
       // Update editor settings
       $editor->setEditor('ckeditor5');
@@ -86,7 +82,7 @@ class Configurator {
           'items' => $advanced_config['toolbar'],
         ],
         'plugins' => $advanced_config['plugins'],
-        'image_upload' => $advanced_config['image_upload'],
+        'image_upload' => FALSE,
       ]);
       $editor->save();
     }
@@ -109,6 +105,8 @@ class Configurator {
       'ckeditor5_plugin_pack',
       'ckeditor5_plugin_pack_emoji',
       'ckeditor5_plugin_pack_fullscreen',
+      'ckeditor5_plugin_pack_text_transformation',
+      'ckeditor5_plugin_pack_word_count',
       'editor_advanced_link',
       'linkit',
     ];
@@ -127,56 +125,155 @@ class Configurator {
       }
     }
 
-    // Define the complete toolbar configuration with groups and line breaks
+    // Define the exact toolbar configuration as provided
     $advanced_toolbar = [
-      // Text formatting group
       'bold',
       'italic',
       'strikethrough',
       'underline',
-      '|', // Divider
-      
-      // Structure and alignment group
+      'subscript',
+      'superscript',
+      '|',
       'heading',
       'style',
+      'removeFormat',
       'alignment',
       'horizontalLine',
-      '|', // Divider
-      
-      // Lists and indentation group
+      '|',
       'bulletedList',
       'numberedList',
       'indent',
       'outdent',
-      '|', // Divider
-      
-      // Insert tools group
+      '|',
       'link',
       'emoji',
       'insertTable',
       'sourceEditing',
       'fullscreen',
-      '|', // Divider
-      
-      // History group
+      '|',
       'undo',
       'redo',
-      '-', // Line break (wrapping)
+      '-',
     ];
 
-    // Filter toolbar to only include items that exist in the original toolbar or are new features
-    $filtered_toolbar = [];
-    $always_include = ['|', '-', 'emoji', 'fullscreen', 'horizontalLine'];
-    
-    foreach ($advanced_toolbar as $item) {
-      if (in_array($item, $always_include, TRUE) || in_array($item, $cke5_toolbar, TRUE)) {
-        $filtered_toolbar[] = $item;
-      }
-    }
+    $advanced_toolbar = array_merge($advanced_toolbar, $cke5_toolbar);
 
     // Merge with existing plugin settings and add advanced configurations
     $advanced_plugin_settings = array_merge($cke5_plugin_settings, [
-      // Emoji plugin configuration
+      'ckeditor5_alignment' => [
+        'enabled_alignments' => [
+          'center',
+          'justify',
+          'left',
+          'right',
+        ],
+      ],
+      'ckeditor5_heading' => [
+        'enabled_headings' => [
+          'heading1',
+          'heading2',
+          'heading3',
+          'heading4',
+          'heading5',
+          'heading6',
+        ],
+      ],
+      'ckeditor5_list' => [
+        'properties' => [
+          'reversed' => TRUE,
+          'startIndex' => TRUE,
+        ],
+        'multiBlock' => TRUE,
+      ],
+      'ckeditor5_paste_filter_pasteFilter' => [
+        'enabled' => TRUE,
+        'filters' => [
+          [
+            'enabled' => TRUE,
+            'weight' => -10,
+            'search' => '<o:p><\/o:p>',
+            'replace' => '',
+          ],
+          [
+            'enabled' => TRUE,
+            'weight' => -9,
+            'search' => '(<[^>]*) (style="[^"]*")',
+            'replace' => '$1',
+          ],
+          [
+            'enabled' => TRUE,
+            'weight' => -8,
+            'search' => '(<[^>]*) (face="[^"]*")',
+            'replace' => '$1',
+          ],
+          [
+            'enabled' => TRUE,
+            'weight' => -7,
+            'search' => '(<[^>]*) (class="[^"]*")',
+            'replace' => '$1',
+          ],
+          [
+            'enabled' => TRUE,
+            'weight' => -6,
+            'search' => '(<[^>]*) (valign="[^"]*")',
+            'replace' => '$1',
+          ],
+          [
+            'enabled' => TRUE,
+            'weight' => -5,
+            'search' => '<font[^>]*>',
+            'replace' => '',
+          ],
+          [
+            'enabled' => TRUE,
+            'weight' => -4,
+            'search' => '<\/font>',
+            'replace' => '',
+          ],
+          [
+            'enabled' => TRUE,
+            'weight' => -3,
+            'search' => '<span[^>]*>',
+            'replace' => '',
+          ],
+          [
+            'enabled' => TRUE,
+            'weight' => -2,
+            'search' => '<\/span>',
+            'replace' => '',
+          ],
+          [
+            'enabled' => TRUE,
+            'weight' => -1,
+            'search' => '<p>&nbsp;<\/p>',
+            'replace' => '',
+          ],
+          [
+            'enabled' => TRUE,
+            'weight' => 0,
+            'search' => '<p><\/p>',
+            'replace' => '',
+          ],
+          [
+            'enabled' => TRUE,
+            'weight' => 1,
+            'search' => '<b><\/b>',
+            'replace' => '',
+          ],
+          [
+            'enabled' => TRUE,
+            'weight' => 2,
+            'search' => '<i><\/i>',
+            'replace' => '',
+          ],
+          [
+            'enabled' => TRUE,
+            'weight' => 3,
+            'search' => '<a name="OLE_LINK[^"]*">(.*?)<\/a>',
+            'replace' => '$1',
+          ],
+        ],
+      ],
       'ckeditor5_plugin_pack_emoji_emoji' => [
         'definitionsUrl' => '',
         'dropdownLimit' => 6,
@@ -184,8 +281,67 @@ class Configurator {
         'useCustomFont' => FALSE,
         'version' => 16,
       ],
-      
-      // Style plugin with custom styles
+      'ckeditor5_plugin_pack_text_transformation__text_transformation' => [
+        'enabled' => TRUE,
+        'extra_transformations' => '',
+        'extra_regex_transformations' => [],
+        'groups' => [
+          'typography' => [
+            'transformations' => [
+              'ellipsis' => ['enabled' => 1],
+              'enDash' => ['enabled' => 1],
+              'emDash' => ['enabled' => 1],
+            ],
+            'enabled' => 1,
+          ],
+          'quotes' => [
+            'transformations' => [
+              'quotesPrimary' => ['enabled' => 1],
+              'quotesSecondary' => ['enabled' => 1],
+            ],
+            'enabled' => 1,
+          ],
+          'symbols' => [
+            'transformations' => [
+              'trademark' => ['enabled' => 1],
+              'registeredTrademark' => ['enabled' => 1],
+              'copyright' => ['enabled' => 1],
+            ],
+            'enabled' => 1,
+          ],
+          'mathematical' => [
+            'transformations' => [
+              'oneHalf' => ['enabled' => 1],
+              'oneThird' => ['enabled' => 1],
+              'twoThirds' => ['enabled' => 1],
+              'oneFourth' => ['enabled' => 1],
+              'threeQuarters' => ['enabled' => 1],
+              'lessThanOrEqual' => ['enabled' => 1],
+              'greaterThanOrEqual' => ['enabled' => 1],
+              'notEqual' => ['enabled' => 1],
+              'arrowLeft' => ['enabled' => 1],
+              'arrowRight' => ['enabled' => 1],
+            ],
+            'enabled' => 1,
+          ],
+          'misc' => [
+            'transformations' => [
+              'quotesPrimaryEnGb' => ['enabled' => 0],
+              'quotesSecondaryEnGb' => ['enabled' => 0],
+              'quotesPrimaryPl' => ['enabled' => 0],
+              'quotesSecondaryPl' => ['enabled' => 0],
+            ],
+            'enabled' => 0,
+          ],
+        ],
+      ],
+      'ckeditor5_plugin_pack_word_count__word_count' => [
+        'word_count_enabled' => FALSE,
+        'word_count_mode' => 'chars_only',
+      ],
+      'ckeditor5_sourceEditing' => [
+        'allowed_tags' => [],
+      ],
       'ckeditor5_style' => [
         'styles' => [
           [
@@ -238,8 +394,13 @@ class Configurator {
           ],
         ],
       ],
-      
-      // Linkit integration
+      'editor_advanced_link_link' => [
+        'enabled_attributes' => [
+          'rel',
+          'target',
+          'title',
+        ],
+      ],
       'linkit_extension' => [
         'linkit_enabled' => TRUE,
         'linkit_profile' => 'default_linkit',
@@ -247,213 +408,9 @@ class Configurator {
     ]);
 
     return [
-      'toolbar' => $filtered_toolbar,
+      'toolbar' => $advanced_toolbar,
       'plugins' => $advanced_plugin_settings,
-      'image_upload' => [
-        'status' => FALSE,
-      ],
     ];
-  }
-
-  /**
-   * Reorders toolbar items according to a specific order.
-   *
-   * @param array $toolbar_items
-   *   The current toolbar items.
-   *
-   * @return array
-   *   The reordered toolbar items.
-   */
-  protected function reorderToolbarItems(array $toolbar_items): array {
-    // Define your preferred toolbar order here
-    $preferred_order = [
-      'heading',
-      'style',
-      'link',
-      'bold',
-      'italic',
-      'bulletedList',
-      'numberedList',
-      'alignment',
-      'insertTable',
-      'sourceEditing',
-      'drupalInsertImage',
-      'blockQuote',
-    ];
-
-    $ordered_items = [];
-    
-    // Add items in preferred order if they exist
-    foreach ($preferred_order as $item) {
-      if (in_array($item, $toolbar_items, TRUE)) {
-        $ordered_items[] = $item;
-      }
-    }
-    
-    // Add any remaining items that weren't in the preferred order
-    foreach ($toolbar_items as $item) {
-      if (!in_array($item, $ordered_items, TRUE)) {
-        $ordered_items[] = $item;
-      }
-    }
-    
-    return $ordered_items;
-  }
-
-  /**
-   * Activates and configures additional editor plugins.
-   *
-   * @param array $plugin_settings
-   *   The current plugin settings.
-   *
-   * @return array
-   *   The updated plugin settings with additional plugins activated.
-   */
-  protected function activateAdditionalPlugins(array $plugin_settings): array {
-    // Example: Activate and configure additional plugins
-    
-    // Enable alignment plugin
-    $plugin_settings['ckeditor5_alignment'] = [
-      'enabled_alignments' => [
-        'center',
-        'justify',
-        'left',
-        'right',
-      ],
-    ];
-    
-    // Configure heading plugin
-    $plugin_settings['ckeditor5_heading'] = [
-      'enabled_headings' => [
-        'heading1',
-        'heading2',
-        'heading3',
-        'heading4',
-        'heading5',
-        'heading6',
-      ],
-    ];
-    
-    // Configure image resize plugin
-    $plugin_settings['ckeditor5_imageResize'] = [
-      'allow_resize' => TRUE,
-    ];
-    
-    // Configure list plugin
-    $plugin_settings['ckeditor5_list'] = [
-      'properties' => [
-        'reversed' => TRUE,
-        'startIndex' => TRUE,
-      ],
-      'multiBlock' => TRUE,
-    ];
-
-    // Configure paste filter plugin
-    $plugin_settings['ckeditor5_paste_filter_pasteFilter'] = [
-      'enabled' =>  TRUE,
-      'filters' =>  [
-        [
-          'enabled' => TRUE,
-          'weight' => -10,
-          'search' => '<o:p><\/o:p>',
-          'replace' => '',
-        ],
-        [
-          'enabled' => TRUE,
-          'weight' => -9,
-          'search' => '(<[^>]*) (style="[^"]*")',
-          'replace' => '$1',
-        ],
-        [
-          'enabled' => TRUE,
-          'weight' => -8,
-          'search' => '(<[^>]*) (face="[^"]*")',
-          'replace' => '$1',
-        ],
-        [
-          'enabled' => TRUE,
-          'weight' => -7,
-          'search' => '(<[^>]*) (class="[^"]*")',
-          'replace' => '$1',
-        ],
-        [
-          'enabled' => TRUE,
-          'weight' => -6,
-          'search' => '(<[^>]*) (valign="[^"]*")',
-          'replace' => '$1',
-        ],
-        [
-          'enabled' => TRUE,
-          'weight' => -5,
-          'search' => '<font[^>]*>',
-          'replace' => '',
-        ],
-        [
-          'enabled' => TRUE,
-          'weight' => -4,
-          'search' => '<\/font>',
-          'replace' => '',
-        ],
-        [
-          'enabled' => TRUE,
-          'weight' => -3,
-          'search' => '<span[^>]*>',
-          'replace' => '',
-        ],
-        [
-          'enabled' => TRUE,
-          'weight' => -2,
-          'search' => '<\/span>',
-          'replace' => '',
-        ],
-        [
-          'enabled' => TRUE,
-          'weight' => -1,
-          'search' => '<p>&nbsp;<\/p>',
-          'replace' => '',
-        ],
-        [
-          'enabled' => TRUE,
-          'weight' => 0,
-          'search' => '<p><\/p>',
-          'replace' => '',
-        ],
-        [
-          'enabled' => TRUE,
-          'weight' => 1,
-          'search' => '<b><\/b>',
-          'replace' => '',
-        ],
-        [
-          'enabled' => TRUE,
-          'weight' => 2,
-          'search' => '<i><\/i>',
-          'replace' => '',
-        ],
-        [
-          'enabled' => TRUE,
-          'weight' => 3,
-          'search' => '<a name="OLE_LINK[^"]*">(.*?)<\/a>',
-          'replace' => '$1',
-        ],
-      ],
-    ];
-
-    // Configure source editing plugin
-    $plugin_settings['ckeditor5_sourceEditing'] = [
-      'allowed_tags' => [],
-    ];
-
-    // Configure advanced link plugin
-    $plugin_settings['editor_advanced_link_link'] = [
-      'enabled_attributes' => [
-        'rel',
-        'target',
-        'title',
-      ],
-    ];
-    
-    return $plugin_settings;
   }
 
 }
