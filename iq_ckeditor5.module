@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Module to configure CKEditor 5.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function iq_ckeditor5_help($route_name, $route_match) {
+  if ($route_name == 'help.page.ckeditor5') {
+    return t('This module provides configuration for CKEditor 5.');
+  }
+}

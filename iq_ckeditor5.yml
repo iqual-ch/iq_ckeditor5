@@ -1,0 +1,8 @@
+services:
+  iq_ckeditor5.configurator:
+    class: Drupal\iq_ckeditor5\Configurator
+    arguments:
+      - '@module_installer'
+      - '@module_handler'
+      - '@entity_type.manager'
+      - '@logger.factory'
