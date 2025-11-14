@@ -68,8 +68,10 @@ class Configurator {
         continue;
       }
 
+      $toolbar = $editor_settings['toolbar'] ?? [];
+
       // Reorder toolbar items according to specific order
-      $cke5_toolbar = $this->reorderToolbarItems($cke5_toolbar);
+      $cke5_toolbar = $this->reorderToolbarItems($toolbar);
             
       // Activate and configure additional plugins
       $cke5_plugin_settings = $this->activateAdditionalPlugins($cke5_plugin_settings);
