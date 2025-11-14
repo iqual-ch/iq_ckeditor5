@@ -6,9 +6,17 @@
  */
 
 /**
+ * Implements hook_install().
+ */
+function iq_ckeditor5_install() {
+  // Set the initial schema version so update hooks can run.
+  drupal_set_installed_schema_version('iq_ckeditor5', 10000);
+}
+
+/**
  * Update hook to configure ck5 extensions.
  */
-function iq_ckeditor5_update_10001() {
+function iq_ckeditor5_update_11001() {
   $configurator = \Drupal::service('iq_ckeditor5.configurator');
   $configurator->configureExtensions();
 }
