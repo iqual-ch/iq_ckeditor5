@@ -82,7 +82,6 @@ class Configurator {
           'items' => $advanced_config['toolbar'],
         ],
         'plugins' => $advanced_config['plugins'],
-        'image_upload' => FALSE,
       ]);
       $editor->save();
     }
@@ -155,8 +154,6 @@ class Configurator {
       'redo',
       '-',
     ];
-
-    $advanced_toolbar = array_merge($advanced_toolbar, $cke5_toolbar);
 
     // Merge with existing plugin settings and add advanced configurations
     $advanced_plugin_settings = array_merge($cke5_plugin_settings, [
