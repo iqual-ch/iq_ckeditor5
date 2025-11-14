@@ -8,7 +8,7 @@
 /**
  * Update hook to configure ck5 extensions.
  */
-function iq_ckeditor5_update_11001() {
+function iq_ckeditor5_update_10001() {
   $configurator = \Drupal::service('iq_ckeditor5.configurator');
   $configurator->configureExtensions();
 }
