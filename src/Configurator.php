@@ -442,14 +442,23 @@ class Configurator {
    *   The text format to configure filters for.
    */
   protected function configureFilters($format) {
-    // Define the filter configuration
-    
-
     // Get existing filters
     $existing_filters = $format->get('filters');
 
+    // Merge filter_html settings with existing allowed_html tags
+    $default_allowed_html = '<span class="h1 h2 h3 h4 h5 h6 standard small lead deco-font-1 deco-font-2 deco-font-3">';
+    $existing_allowed_html = $existing_filters['filter_html']['settings']['allowed_html'] ?? '';
+    
+    // Merge allowed HTML: add our classes to existing tags
+    $merged_allowed_html = $this->mergeAllowedHtml($existing_allowed_html, $default_allowed_html);
+
+    $filter_config = $this->filterConfig;
+    if (isset($filter_config['filter_html'])) {
+      $filter_config['filter_html']['settings']['allowed_html'] = $merged_allowed_html;
+    }
+
     // Merge with existing filters, preserving filters not in our configuration
-    foreach ($this->filterConfig as $filter_id => $config) {
+    foreach ($filter_config as $filter_id => $config) {
       $existing_filters[$filter_id] = $config;
     }
 
@@ -460,6 +469,117 @@ class Configurator {
     $this->logger->info('Configured filters for text format @format', [
       '@format' => $format->id(),
     ]);
+  }
+
+  /**
+   * Merges allowed HTML tags and classes.
+   *
+   * @param string $existing_html
+   *   The existing allowed HTML string.
+   * @param string $new_html
+   *   The new allowed HTML string to merge in.
+   *
+   * @return string
+   *   The merged allowed HTML string.
+   */
+  protected function mergeAllowedHtml(string $existing_html, string $new_html): string {
+    // Parse both HTML strings into structured data
+    $existing_tags = $this->parseAllowedHtml($existing_html);
+    $new_tags = $this->parseAllowedHtml($new_html);
+
+    // Merge the tags
+    foreach ($new_tags as $tag => $new_data) {
+      if (isset($existing_tags[$tag])) {
+        // Tag exists, merge classes
+        if (!empty($new_data['classes'])) {
+          $existing_classes = $existing_tags[$tag]['classes'] ?? [];
+          $existing_tags[$tag]['classes'] = array_unique(array_merge($existing_classes, $new_data['classes']));
+        }
+        // Merge other attributes if needed
+        if (!empty($new_data['attributes'])) {
+          $existing_attrs = $existing_tags[$tag]['attributes'] ?? [];
+          $existing_tags[$tag]['attributes'] = array_unique(array_merge($existing_attrs, $new_data['attributes']));
+        }
+      } else {
+        // New tag, add it
+        $existing_tags[$tag] = $new_data;
+      }
+    }
+
+    // Convert back to HTML string
+    return $this->buildAllowedHtml($existing_tags);
+  }
+
+  /**
+   * Parses an allowed HTML string into structured data.
+   *
+   * @param string $html
+   *   The allowed HTML string.
+   *
+   * @return array
+   *   Array of tags with their classes and attributes.
+   */
+  protected function parseAllowedHtml(string $html): array {
+    $tags = [];
+    
+    // Match all tags like <tagname class="class1 class2" attr1 attr2>
+    preg_match_all('/<([a-z0-9]+)([^>]*)>/i', $html, $matches, PREG_SET_ORDER);
+    
+    foreach ($matches as $match) {
+      $tag = $match[1];
+      $attributes_string = $match[2];
+      
+      $tags[$tag] = [
+        'classes' => [],
+        'attributes' => [],
+      ];
+      
+      // Extract class attribute
+      if (preg_match('/class="([^"]*)"/', $attributes_string, $class_match)) {
+        $classes = explode(' ', $class_match[1]);
+        $tags[$tag]['classes'] = array_filter($classes);
+      }
+      
+      // Extract other attributes (simple ones without values)
+      $attributes_string = preg_replace('/class="[^"]*"/', '', $attributes_string);
+      if (preg_match_all('/([a-z0-9_-]+)(?!=)/i', $attributes_string, $attr_matches)) {
+        $tags[$tag]['attributes'] = array_filter($attr_matches[1]);
+      }
+    }
+    
+    return $tags;
+  }
+
+  /**
+   * Builds an allowed HTML string from structured data.
+   *
+   * @param array $tags
+   *   Array of tags with their classes and attributes.
+   *
+   * @return string
+   *   The allowed HTML string.
+   */
+  protected function buildAllowedHtml(array $tags): string {
+    $html_parts = [];
+    
+    foreach ($tags as $tag => $data) {
+      $tag_string = '<' . $tag;
+      
+      // Add class attribute if present
+      if (!empty($data['classes'])) {
+        $tag_string .= ' class="' . implode(' ', $data['classes']) . '"';
+      }
+      
+      // Add other attributes
+      if (!empty($data['attributes'])) {
+        $tag_string .= ' ' . implode(' ', $data['attributes']);
+      }
+      
+      $tag_string .= '>';
+      $html_parts[] = $tag_string;
+    }
+    
+    return implode(' ', $html_parts);
   }
 
   /**
