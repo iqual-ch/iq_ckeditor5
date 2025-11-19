@@ -315,8 +315,8 @@ class Configurator {
       ],
     ],
     'ckeditor5_plugin_pack_word_count__word_count' => [
-      'word_count_enabled' => FALSE,
-      'word_count_mode' => 'chars_only',
+      'word_count_enabled' => TRUE,
+      'word_count_mode' => 'words_chars',
     ],
     'ckeditor5_sourceEditing' => [
       'allowed_tags' => [],
@@ -513,6 +513,9 @@ class Configurator {
 
     // Add the wrap item at the end to make sure the toolbar is wrapped.
     $final_toolbar[] = '-';
+
+    // Remove Fullscreen if it was added before.
+    unset($final_toolbar['Fullscreen']);
 
     return [
       'toolbar' => $final_toolbar,
