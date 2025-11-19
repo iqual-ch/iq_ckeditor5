@@ -75,7 +75,6 @@ class Configurator {
     '|',
     'undo',
     'redo',
-    '-',
   ];
 
   /**
@@ -511,6 +510,9 @@ class Configurator {
         $final_toolbar[] = $item;
       }
     }
+
+    // Add the wrap item at the end to make sure the toolbar is wrapped.
+    $final_toolbar[] = '-';
 
     return [
       'toolbar' => $final_toolbar,
