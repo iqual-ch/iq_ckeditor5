@@ -29,6 +29,351 @@ class Configurator {
   protected $logger;
 
   /**
+   * Required modules for advanced CKEditor5 features.
+   *
+   * @var array
+   */
+  protected $requiredModules = [
+    'ckeditor5_plugin_pack',
+    'ckeditor5_plugin_pack_emoji',
+    'ckeditor5_plugin_pack_fullscreen',
+    'ckeditor5_plugin_pack_text_transformation',
+    'ckeditor5_plugin_pack_word_count',
+    'editor_advanced_link',
+    'linkit',
+  ];
+
+  /**
+   * Advanced toolbar configuration.
+   *
+   * @var array
+   */
+  protected $advancedToolbar = [
+    'bold',
+    'italic',
+    'strikethrough',
+    'underline',
+    'subscript',
+    'superscript',
+    '|',
+    'heading',
+    'style',
+    'removeFormat',
+    'alignment',
+    'horizontalLine',
+    '|',
+    'bulletedList',
+    'numberedList',
+    'indent',
+    'outdent',
+    '|',
+    'link',
+    'emoji',
+    'insertTable',
+    'sourceEditing',
+    'fullscreen',
+    '|',
+    'undo',
+    'redo',
+    '-',
+  ];
+
+  /**
+   * Predefined styles for CKEditor5 style plugin.
+   *
+   * @var array
+   */
+  protected $predefinedStyles = [
+    [
+      'label' => 'Heading 1',
+      'element' => '<span class="h1">',
+    ],
+    [
+      'label' => 'Heading 2',
+      'element' => '<span class="h2">',
+    ],
+    [
+      'label' => 'Heading 3',
+      'element' => '<span class="h3">',
+    ],
+    [
+      'label' => 'Heading 4',
+      'element' => '<span class="h4">',
+    ],
+    [
+      'label' => 'Heading 5',
+      'element' => '<span class="h5">',
+    ],
+    [
+      'label' => 'Heading 6',
+      'element' => '<span class="h6">',
+    ],
+    [
+      'label' => 'Standard text',
+      'element' => '<span class="standard">',
+    ],
+    [
+      'label' => 'Small text',
+      'element' => '<span class="small">',
+    ],
+    [
+      'label' => 'Lead text',
+      'element' => '<span class="lead">',
+    ],
+    [
+      'label' => 'Deco font 1',
+      'element' => '<span class="deco-font-1">',
+    ],
+    [
+      'label' => 'Deco font 2',
+      'element' => '<span class="deco-font-2">',
+    ],
+    [
+      'label' => 'Deco font 3',
+      'element' => '<span class="deco-font-3">',
+    ],
+  ];
+
+  /**
+   * Plugin settings for CKEditor5 features.
+   *
+   * @var array
+   */
+  protected $pluginSettings = [
+    'ckeditor5_alignment' => [
+      'enabled_alignments' => [
+        'center',
+        'justify',
+        'left',
+        'right',
+      ],
+    ],
+    'ckeditor5_heading' => [
+      'enabled_headings' => [
+        'heading1',
+        'heading2',
+        'heading3',
+        'heading4',
+        'heading5',
+        'heading6',
+      ],
+    ],
+    'ckeditor5_list' => [
+      'properties' => [
+        'reversed' => TRUE,
+        'startIndex' => TRUE,
+      ],
+      'multiBlock' => TRUE,
+    ],
+    'ckeditor5_paste_filter_pasteFilter' => [
+      'enabled' => TRUE,
+      'filters' => [
+        [
+          'enabled' => TRUE,
+          'weight' => -10,
+          'search' => '<o:p><\/o:p>',
+          'replace' => '',
+        ],
+        [
+          'enabled' => TRUE,
+          'weight' => -9,
+          'search' => '(<[^>]*) (style="[^"]*")',
+          'replace' => '$1',
+        ],
+        [
+          'enabled' => TRUE,
+          'weight' => -8,
+          'search' => '(<[^>]*) (face="[^"]*")',
+          'replace' => '$1',
+        ],
+        [
+          'enabled' => TRUE,
+          'weight' => -7,
+          'search' => '(<[^>]*) (class="[^"]*")',
+          'replace' => '$1',
+        ],
+        [
+          'enabled' => TRUE,
+          'weight' => -6,
+          'search' => '(<[^>]*) (valign="[^"]*")',
+          'replace' => '$1',
+        ],
+        [
+          'enabled' => TRUE,
+          'weight' => -5,
+          'search' => '<font[^>]*>',
+          'replace' => '',
+        ],
+        [
+          'enabled' => TRUE,
+          'weight' => -4,
+          'search' => '<\/font>',
+          'replace' => '',
+        ],
+        [
+          'enabled' => TRUE,
+          'weight' => -3,
+          'search' => '<span[^>]*>',
+          'replace' => '',
+        ],
+        [
+          'enabled' => TRUE,
+          'weight' => -2,
+          'search' => '<\/span>',
+          'replace' => '',
+        ],
+        [
+          'enabled' => TRUE,
+          'weight' => -1,
+          'search' => '<p>&nbsp;<\/p>',
+          'replace' => '',
+        ],
+        [
+          'enabled' => TRUE,
+          'weight' => 0,
+          'search' => '<p><\/p>',
+          'replace' => '',
+        ],
+        [
+          'enabled' => TRUE,
+          'weight' => 1,
+          'search' => '<b><\/b>',
+          'replace' => '',
+        ],
+        [
+          'enabled' => TRUE,
+          'weight' => 2,
+          'search' => '<i><\/i>',
+          'replace' => '',
+        ],
+        [
+          'enabled' => TRUE,
+          'weight' => 3,
+          'search' => '<a name="OLE_LINK[^"]*">(.*?)<\/a>',
+          'replace' => '$1',
+        ],
+      ],
+    ],
+    'ckeditor5_plugin_pack_emoji_emoji' => [
+      'definitionsUrl' => '',
+      'dropdownLimit' => 6,
+      'skinTone' => 'default',
+      'useCustomFont' => FALSE,
+      'version' => 16,
+    ],
+    'ckeditor5_plugin_pack_text_transformation__text_transformation' => [
+      'enabled' => TRUE,
+      'extra_transformations' => '',
+      'extra_regex_transformations' => [],
+      'groups' => [
+        'typography' => [
+          'transformations' => [
+            'ellipsis' => ['enabled' => 1],
+            'enDash' => ['enabled' => 1],
+            'emDash' => ['enabled' => 1],
+          ],
+          'enabled' => 1,
+        ],
+        'quotes' => [
+          'transformations' => [
+            'quotesPrimary' => ['enabled' => 1],
+            'quotesSecondary' => ['enabled' => 1],
+          ],
+          'enabled' => 1,
+        ],
+        'symbols' => [
+          'transformations' => [
+            'trademark' => ['enabled' => 1],
+            'registeredTrademark' => ['enabled' => 1],
+            'copyright' => ['enabled' => 1],
+          ],
+          'enabled' => 1,
+        ],
+        'mathematical' => [
+          'transformations' => [
+            'oneHalf' => ['enabled' => 1],
+            'oneThird' => ['enabled' => 1],
+            'twoThirds' => ['enabled' => 1],
+            'oneFourth' => ['enabled' => 1],
+            'threeQuarters' => ['enabled' => 1],
+            'lessThanOrEqual' => ['enabled' => 1],
+            'greaterThanOrEqual' => ['enabled' => 1],
+            'notEqual' => ['enabled' => 1],
+            'arrowLeft' => ['enabled' => 1],
+            'arrowRight' => ['enabled' => 1],
+          ],
+          'enabled' => 1,
+        ],
+        'misc' => [
+          'transformations' => [
+            'quotesPrimaryEnGb' => ['enabled' => 0],
+            'quotesSecondaryEnGb' => ['enabled' => 0],
+            'quotesPrimaryPl' => ['enabled' => 0],
+            'quotesSecondaryPl' => ['enabled' => 0],
+          ],
+          'enabled' => 0,
+        ],
+      ],
+    ],
+    'ckeditor5_plugin_pack_word_count__word_count' => [
+      'word_count_enabled' => FALSE,
+      'word_count_mode' => 'chars_only',
+    ],
+    'ckeditor5_sourceEditing' => [
+      'allowed_tags' => [],
+    ],
+    'editor_advanced_link_link' => [
+      'enabled_attributes' => [
+        'rel',
+        'target',
+        'title',
+      ],
+    ],
+    'linkit_extension' => [
+      'linkit_enabled' => TRUE,
+      'linkit_profile' => 'default_linkit',
+    ],
+  ];
+
+  /**
+   * Filter configuration for text formats.
+   *
+   * @var array
+   */
+  protected $filterConfig = [
+    'filter_html' => [
+      'id' => 'filter_html',
+      'provider' => 'filter',
+      'status' => FALSE,
+      'weight' => -10,
+      'settings' => [
+        'allowed_html' => '<span class="h1 h2 h3 h4 h5 h6 standard small lead deco-font-1 deco-font-2 deco-font-3">',
+        'filter_html_help' => TRUE,
+        'filter_html_nofollow' => FALSE,
+      ],
+    ],
+    'filter_url' => [
+      'id' => 'filter_url',
+      'provider' => 'filter',
+      'status' => TRUE,
+      'weight' => 0,
+      'settings' => [
+        'filter_url_length' => 72,
+      ],
+    ],
+    'linkit' => [
+      'id' => 'linkit',
+      'provider' => 'linkit',
+      'status' => TRUE,
+      'weight' => 0,
+      'settings' => [
+        'title' => TRUE,
+        'media_substitution' => 'metadata',
+      ],
+    ],
+  ];
+
+  /**
    * Constructs a Migrator service.
    *
    * @param \Drupal\Core\Extension\ModuleInstallerInterface $moduleInstaller
@@ -84,7 +429,37 @@ class Configurator {
         'plugins' => $advanced_config['plugins'],
       ]);
       $editor->save();
+
+      // Configure filters for the text format
+      $this->configureFilters($format);
     }
+  }
+
+  /**
+   * Configures filters for a text format.
+   *
+   * @param \Drupal\filter\FilterFormatInterface $format
+   *   The text format to configure filters for.
+   */
+  protected function configureFilters($format) {
+    // Define the filter configuration
+    
+
+    // Get existing filters
+    $existing_filters = $format->get('filters');
+
+    // Merge with existing filters, preserving filters not in our configuration
+    foreach ($this->filterConfig as $filter_id => $config) {
+      $existing_filters[$filter_id] = $config;
+    }
+
+    // Set the filters
+    $format->set('filters', $existing_filters);
+    $format->save();
+
+    $this->logger->info('Configured filters for text format @format', [
+      '@format' => $format->id(),
+    ]);
   }
 
   /**
@@ -100,17 +475,7 @@ class Configurator {
    */
   protected function configureAdvancedFeatures(array $cke5_toolbar, array $cke5_plugin_settings): array {
     // Install required modules if not already installed
-    $required_modules = [
-      'ckeditor5_plugin_pack',
-      'ckeditor5_plugin_pack_emoji',
-      'ckeditor5_plugin_pack_fullscreen',
-      'ckeditor5_plugin_pack_text_transformation',
-      'ckeditor5_plugin_pack_word_count',
-      'editor_advanced_link',
-      'linkit',
-    ];
-    
-    foreach ($required_modules as $module) {
+    foreach ($this->requiredModules as $module) {
       if (!$this->moduleHandler->moduleExists($module)) {
         try {
           $this->moduleInstaller->install([$module]);
@@ -123,289 +488,46 @@ class Configurator {
         }
       }
     }
+    
+    // Merge styles: predefined first, then existing ones that are different
+    $merged_styles = $this->predefinedStyles;
+    $existing_styles = $cke5_plugin_settings['ckeditor5_style']['styles'] ?? [];
+    
+    foreach ($existing_styles as $existing_style) {
+      $is_duplicate = FALSE;
+      foreach ($this->predefinedStyles as $predefined_style) {
+        // Check if the existing style matches a predefined one (by element or label)
+        if ($existing_style['element'] === $predefined_style['element'] ||
+            $existing_style['label'] === $predefined_style['label']) {
+          $is_duplicate = TRUE;
+          break;
+        }
+      }
+      // Add existing style only if it's not a duplicate
+      if (!$is_duplicate) {
+        $merged_styles[] = $existing_style;
+      }
+    }
 
-    // Define the exact toolbar configuration as provided
-    $advanced_toolbar = [
-      'bold',
-      'italic',
-      'strikethrough',
-      'underline',
-      'subscript',
-      'superscript',
-      '|',
-      'heading',
-      'style',
-      'removeFormat',
-      'alignment',
-      'horizontalLine',
-      '|',
-      'bulletedList',
-      'numberedList',
-      'indent',
-      'outdent',
-      '|',
-      'link',
-      'emoji',
-      'insertTable',
-      'sourceEditing',
-      'fullscreen',
-      '|',
-      'undo',
-      'redo',
-      '-',
+    // Add the ckeditor5_style configuration with merged styles
+    $plugin_settings_with_styles = $this->pluginSettings;
+    $plugin_settings_with_styles['ckeditor5_style'] = [
+      'styles' => $merged_styles,
     ];
 
-    // Merge with existing plugin settings and add advanced configurations
-    $advanced_plugin_settings = array_merge($cke5_plugin_settings, [
-      'ckeditor5_alignment' => [
-        'enabled_alignments' => [
-          'center',
-          'justify',
-          'left',
-          'right',
-        ],
-      ],
-      'ckeditor5_heading' => [
-        'enabled_headings' => [
-          'heading1',
-          'heading2',
-          'heading3',
-          'heading4',
-          'heading5',
-          'heading6',
-        ],
-      ],
-      'ckeditor5_list' => [
-        'properties' => [
-          'reversed' => TRUE,
-          'startIndex' => TRUE,
-        ],
-        'multiBlock' => TRUE,
-      ],
-      'ckeditor5_paste_filter_pasteFilter' => [
-        'enabled' => TRUE,
-        'filters' => [
-          [
-            'enabled' => TRUE,
-            'weight' => -10,
-            'search' => '<o:p><\/o:p>',
-            'replace' => '',
-          ],
-          [
-            'enabled' => TRUE,
-            'weight' => -9,
-            'search' => '(<[^>]*) (style="[^"]*")',
-            'replace' => '$1',
-          ],
-          [
-            'enabled' => TRUE,
-            'weight' => -8,
-            'search' => '(<[^>]*) (face="[^"]*")',
-            'replace' => '$1',
-          ],
-          [
-            'enabled' => TRUE,
-            'weight' => -7,
-            'search' => '(<[^>]*) (class="[^"]*")',
-            'replace' => '$1',
-          ],
-          [
-            'enabled' => TRUE,
-            'weight' => -6,
-            'search' => '(<[^>]*) (valign="[^"]*")',
-            'replace' => '$1',
-          ],
-          [
-            'enabled' => TRUE,
-            'weight' => -5,
-            'search' => '<font[^>]*>',
-            'replace' => '',
-          ],
-          [
-            'enabled' => TRUE,
-            'weight' => -4,
-            'search' => '<\/font>',
-            'replace' => '',
-          ],
-          [
-            'enabled' => TRUE,
-            'weight' => -3,
-            'search' => '<span[^>]*>',
-            'replace' => '',
-          ],
-          [
-            'enabled' => TRUE,
-            'weight' => -2,
-            'search' => '<\/span>',
-            'replace' => '',
-          ],
-          [
-            'enabled' => TRUE,
-            'weight' => -1,
-            'search' => '<p>&nbsp;<\/p>',
-            'replace' => '',
-          ],
-          [
-            'enabled' => TRUE,
-            'weight' => 0,
-            'search' => '<p><\/p>',
-            'replace' => '',
-          ],
-          [
-            'enabled' => TRUE,
-            'weight' => 1,
-            'search' => '<b><\/b>',
-            'replace' => '',
-          ],
-          [
-            'enabled' => TRUE,
-            'weight' => 2,
-            'search' => '<i><\/i>',
-            'replace' => '',
-          ],
-          [
-            'enabled' => TRUE,
-            'weight' => 3,
-            'search' => '<a name="OLE_LINK[^"]*">(.*?)<\/a>',
-            'replace' => '$1',
-          ],
-        ],
-      ],
-      'ckeditor5_plugin_pack_emoji_emoji' => [
-        'definitionsUrl' => '',
-        'dropdownLimit' => 6,
-        'skinTone' => 'default',
-        'useCustomFont' => FALSE,
-        'version' => 16,
-      ],
-      'ckeditor5_plugin_pack_text_transformation__text_transformation' => [
-        'enabled' => TRUE,
-        'extra_transformations' => '',
-        'extra_regex_transformations' => [],
-        'groups' => [
-          'typography' => [
-            'transformations' => [
-              'ellipsis' => ['enabled' => 1],
-              'enDash' => ['enabled' => 1],
-              'emDash' => ['enabled' => 1],
-            ],
-            'enabled' => 1,
-          ],
-          'quotes' => [
-            'transformations' => [
-              'quotesPrimary' => ['enabled' => 1],
-              'quotesSecondary' => ['enabled' => 1],
-            ],
-            'enabled' => 1,
-          ],
-          'symbols' => [
-            'transformations' => [
-              'trademark' => ['enabled' => 1],
-              'registeredTrademark' => ['enabled' => 1],
-              'copyright' => ['enabled' => 1],
-            ],
-            'enabled' => 1,
-          ],
-          'mathematical' => [
-            'transformations' => [
-              'oneHalf' => ['enabled' => 1],
-              'oneThird' => ['enabled' => 1],
-              'twoThirds' => ['enabled' => 1],
-              'oneFourth' => ['enabled' => 1],
-              'threeQuarters' => ['enabled' => 1],
-              'lessThanOrEqual' => ['enabled' => 1],
-              'greaterThanOrEqual' => ['enabled' => 1],
-              'notEqual' => ['enabled' => 1],
-              'arrowLeft' => ['enabled' => 1],
-              'arrowRight' => ['enabled' => 1],
-            ],
-            'enabled' => 1,
-          ],
-          'misc' => [
-            'transformations' => [
-              'quotesPrimaryEnGb' => ['enabled' => 0],
-              'quotesSecondaryEnGb' => ['enabled' => 0],
-              'quotesPrimaryPl' => ['enabled' => 0],
-              'quotesSecondaryPl' => ['enabled' => 0],
-            ],
-            'enabled' => 0,
-          ],
-        ],
-      ],
-      'ckeditor5_plugin_pack_word_count__word_count' => [
-        'word_count_enabled' => FALSE,
-        'word_count_mode' => 'chars_only',
-      ],
-      'ckeditor5_sourceEditing' => [
-        'allowed_tags' => [],
-      ],
-      'ckeditor5_style' => [
-        'styles' => [
-          [
-            'label' => 'Heading 1',
-            'element' => '<span class="h1">',
-          ],
-          [
-            'label' => 'Heading 2',
-            'element' => '<span class="h2">',
-          ],
-          [
-            'label' => 'Heading 3',
-            'element' => '<span class="h3">',
-          ],
-          [
-            'label' => 'Heading 4',
-            'element' => '<span class="h4">',
-          ],
-          [
-            'label' => 'Heading 5',
-            'element' => '<span class="h5">',
-          ],
-          [
-            'label' => 'Heading 6',
-            'element' => '<span class="h6">',
-          ],
-          [
-            'label' => 'Standard text',
-            'element' => '<span class="standard">',
-          ],
-          [
-            'label' => 'Small text',
-            'element' => '<span class="small">',
-          ],
-          [
-            'label' => 'Lead text',
-            'element' => '<span class="lead">',
-          ],
-          [
-            'label' => 'Deco font 1',
-            'element' => '<span class="deco-font-1">',
-          ],
-          [
-            'label' => 'Deco font 2',
-            'element' => '<span class="deco-font-2">',
-          ],
-          [
-            'label' => 'Deco font 3',
-            'element' => '<span class="deco-font-3">',
-          ],
-        ],
-      ],
-      'editor_advanced_link_link' => [
-        'enabled_attributes' => [
-          'rel',
-          'target',
-          'title',
-        ],
-      ],
-      'linkit_extension' => [
-        'linkit_enabled' => TRUE,
-        'linkit_profile' => 'default_linkit',
-      ],
-    ]);
+    // Merge with existing plugin settings and add advanced configurations.
+    $advanced_plugin_settings = array_merge($cke5_plugin_settings, $plugin_settings_with_styles);
+
+    // Also preserve existing toolbar items that are not already included.
+    $final_toolbar = $this->advancedToolbar;
+    foreach ($cke5_toolbar as $item) {
+      if (!in_array($item, $final_toolbar, TRUE)) {
+        $final_toolbar[] = $item;
+      }
+    }
 
     return [
-      'toolbar' => $advanced_toolbar,
+      'toolbar' => $final_toolbar,
       'plugins' => $advanced_plugin_settings,
     ];
   }
